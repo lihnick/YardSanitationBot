@@ -98,16 +98,17 @@ function handleMessage(sender_psid, received_message) {
   let response;
   const greeting = firstEntity(received_message.nlp, 'greeting');
   // Check if the message contains text
-  if (received_message.text) {    
+  if (received_message.text) { 
     // Create the payload for a basic text message
     if (greeting && greeting.confidence > 0.8) {
       response = {
         "text": `Hello,"${received_message.text}". Now send me an image!`
       }
+      console.log("greetings 126573848237497ubriuhiurhiudrrddhrdhiuwwnhkjdhjk");
     }
     else {
       response = {
-      " text": `You sent the message: "${received_message.text}". Now send me an image!`
+        "text": `You sent the message: "${received_message.text}". Now send me an image!`
       }
     }
   } 
