@@ -21,6 +21,7 @@ const
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
+
 // Accepts POST requests at /webhook endpoint
 app.post('/webhook', (req, res) => {  
 
@@ -43,15 +44,13 @@ app.post('/webhook', (req, res) => {
       let sender_psid = webhook_event.sender.id;
       console.log('Sender PSID: ' + sender_psid);
       
-      
-        // Check if the event is a message or postback and
-        // pass the event to the appropriate handler function
-        if (webhook_event.message) {
-          handleMessage(sender_psid, webhook_event.message);        
-        } else if (webhook_event.postback) {
-          handlePostback(sender_psid, webhook_event.postback);
-        }
-      
+      // Check if the event is a message or postback and
+      // pass the event to the appropriate handler function
+      if (webhook_event.message) {
+        handleMessage(sender_psid, webhook_event.message);        
+      } else if (webhook_event.postback) {
+        handlePostback(sender_psid, webhook_event.postback);
+      }
     });
 
     // Return a '200 OK' response to all events
@@ -63,6 +62,7 @@ app.post('/webhook', (req, res) => {
   }
 
 });
+
 
 // Accepts GET requests at the /webhook endpoint
 app.get('/webhook', (req, res) => {
@@ -92,6 +92,7 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
 
@@ -104,19 +105,57 @@ function handleMessage(sender_psid, received_message) {
     response = {
       "text": `You sent the message: "${received_message.text}". Now send me an image!`
     }
-  }  else if (received_message.attachements) {
-    // Gets the URL of the message attachment
+  } 
+  else if (received_message.attachments) {
+    // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
-  }
+    response = {
+      "attachment": {
+        "type": "template",
+        "payload": {
+          "template_type": "generic",
+          "elements": [{
+            "title": "Is this the right picture?",
+            "subtitle": "Tap a button to answer.",
+            "image_url": attachment_url,
+            "buttons": [{
+              "type": "postback",
+              "title": "Yes!",
+              "payload": "yes",
+            },
+            {
+              "type": "postback",
+              "title": "No!",
+              "payload": "no",
+            }],
+          }]
+        }
+      }
+    } // end response
+  } 
   
   // Sends the response message
   callSendAPI(sender_psid, response);    
 }
 
+
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
+  let response;
+  
+  // Get the payload for the postback
+  let payload = received_postback.payload;
 
+  // Set the response based on the postback payload
+  if (payload === 'yes') {
+    response = { "text": "Thanks!" }
+  } else if (payload === 'no') {
+    response = { "text": "Oops, try sending another image." }
+  }
+  // Send the message to acknowledge the postback
+  callSendAPI(sender_psid, response);
 }
+
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
