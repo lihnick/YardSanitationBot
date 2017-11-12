@@ -16,6 +16,7 @@ const
   request = require('request'),
   express = require('express'),
   body_parser = require('body-parser'),
+  admin = require("firebase-admin"),
   app = express().use(body_parser.json()); // creates express http server
 
 // Sets server port and logs message on success
