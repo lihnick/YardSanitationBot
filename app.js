@@ -143,11 +143,11 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.attachments[0].type === 'location') {
       var loc = received_message.attachments[0].payload.coordinates;
       var post = {};
-      post[sender_psid] = {
+      post = {
           lat: loc.lat,
           lng: loc.long
       }
-      userRef.update(post);
+      userRef.child(sender_psid).update(post);
       
       response = {
         "attachment": {
