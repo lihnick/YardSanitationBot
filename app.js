@@ -148,7 +148,8 @@ function handleMessage(sender_psid, received_message) {
   else if (received_message.attachments) {
     // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
-    console.log("Location Data: ", received_message.attachments[0]);
+    console.log("Message Attachments: ", received_message.attachments[0]);
+    
     if (received_message.attachments[0].type === 'location') {
       var loc = received_message.attachments[0].payload.coordinates;
       
