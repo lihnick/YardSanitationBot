@@ -91,40 +91,38 @@ app.get('/webhook', (req, res) => {
   }
 });
 
-function firstEntity(nlp, name) {
-  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
-}
 
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
   
-  let response;
-  const greeting = firstEntity(received_message.nlp, 'greeting');
+  let response, nlp;
   // Check if the message contains text
   if (received_message.text) { 
     // Create the payload for a basic text message
-    let nlp = received_message.nlp.entities;
-    if (nlp) {
-      console.log("NLP: ", received_message.nlp); // debug
+//     if (received_message.nlp) {
+//       nlp = received_message.nlp.entities;
+//     }
+//     if (nlp) {
+//       console.log("NLP: ", received_message.nlp); // debug
       
-      if (nlp.location && nlp.location[0].confidence > 0.8) {
-        response = {
-          "text": "Would you like to do a pickup at " + received_message.nlp.entities.location[0].value
-        }
-      }
-      else if (nlp.greetings && nlp.greetings.confidence > 0.8) {
-        console.log("NLP: ", received_message.nlp.entities.greetings);
-        response = {
-          "text": "Hello, please provide an image and location of your leave pickup"
-        }
-      }
-      console.log("NLP: ", received_message.nlp.entities.location);
-    }
-    else {
+//       if (nlp.location && nlp.location[0].confidence > 0.8) {
+//         response = {
+//           "text": "Would you like to do a pickup at " + received_message.nlp.entities.location[0].value
+//         }
+//       }
+//       else if (nlp.greetings && nlp.greetings.confidence > 0.8) {
+//         console.log("NLP[greetings]: ", received_message.nlp.entities.greetings);
+//         response = {
+//           "text": "Hello, please provide an image and location of your leave pickup"
+//         }
+//       }
+//       console.log("NLP[location]: ", received_message.nlp.entities.location);
+//     }
+//     else {
       response = {
         "text": "Hello, please provide an image and location of your leave pickup"
       }
-    }
+    // }
   } 
   else if (received_message.attachments) {
     // Get the URL of the message attachment
