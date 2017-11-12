@@ -177,7 +177,38 @@ function handleMessage(sender_psid, received_message) {
             "template_type": "generic",
             "elements": [{
               "title": "Confirm yard waste collection posting",
-              "subtitle": "Tap a button to answer.",
+              "subtitle": "Location saved, tap a button, or add an optional image.",
+              "image_url": attachment_url,
+              "buttons": [{
+                "type": "postback",
+                "title": "Post",
+                "payload": "Post",
+              },
+              {
+                "type": "postback",
+                "title": "Cancel",
+                "payload": "Cancel",
+              }],
+            }]
+          }
+        }
+      }
+    }
+    else if (received_message.attachments[0].type === 'image') {
+      var img = received_message.attachments[0].payload.url;
+      
+      userRef.child(sender_psid).update({
+        url: img
+      });
+      
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": "Confirm yard waste collection posting",
+              "subtitle": "Image saved, tap a button.",
               "image_url": attachment_url,
               "buttons": [{
                 "type": "postback",
@@ -220,8 +251,8 @@ function handlePostback(sender_psid, received_postback) {
     post.once('value', function(snapshot) {
       console.log("finalize: ", snapshot.val());
       var data = snapshot.val();
-      var time = {lat: data.lat, lng: data.lng, timestamp: Date.now()};
-      post.child('post').push(time);
+      var time = {url: data.url, lat: data.lat, lng: data.lng, timestamp: Date.now()};
+      post.child('posts').push(time);
     });
     response = { "text": "Thanks!" }
   } else if (payload === 'Cancel') {
