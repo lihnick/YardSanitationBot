@@ -105,34 +105,24 @@ function handleMessage(sender_psid, received_message) {
     // Create the payload for a basic text message
     let nlp = received_message.nlp.entities;
     if (nlp) {
-      if (nlp.greetings && nlp.greetings.confidence > 0.8) {
+      console.log("NLP: ", received_message.nlp); // debug
+      
+      if (nlp.location && nlp.location[0].confidence > 0.8) {
+        response = {
+          "text": "Would you like to do a pickup at " + received_message.nlp.entities.location[0].value
+        }
+      }
+      else if (nlp.greetings && nlp.greetings.confidence > 0.8) {
+        console.log("NLP: ", received_message.nlp.entities.greetings);
         response = {
           "text": "Hello, please provide an image and location of your leave pickup"
         }
       }
+      console.log("NLP: ", received_message.nlp.entities.location);
     }
     else {
       response = {
         "text": "Hello, please provide an image and location of your leave pickup"
-      }
-    }
-    if (received_message.nlp) {
-      console.log("NLP: ", received_message.nlp);
-      if (received_message.nlp.entities.location) {
-        console.log("NLP: ", received_message.nlp.entities.location);
-      }
-      if (received_message.nlp.entities.greetings) {
-        console.log("NLP: ", received_message.nlp.entities.greetings);
-      }
-    }
-    if (greeting && greeting.confidence > 0.8) {
-      response = {
-        "text": `Hello, "${received_message.text}". Now send me an image!`
-      }
-    }
-    else {
-      response = {
-        "text": `You sent the message: "${received_message.text}". Now send me an image!`
       }
     }
   } 
