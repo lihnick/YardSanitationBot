@@ -247,12 +247,16 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'Post') {
+    var valid = false;
     var post = userRef.child(sender_psid);
     post.once('value', function(snapshot) {
       console.log("finalize: ", snapshot.val());
       var data = snapshot.val();
-      var time = {url: data.url, lat: data.lat, lng: data.lng, timestamp: Date.now()};
-      post.child('posts').push(time);
+      if (data.lat && data.lng) {
+        var time = {url: data.url, lat: data.lat, lng: data.lng, timestamp: Date.now()};
+        post.child('posts').push(time);
+        valid = true;
+      }
     });
     response = { "text": "Thanks!" }
   } else if (payload === 'Cancel') {
