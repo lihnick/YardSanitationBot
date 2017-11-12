@@ -116,12 +116,10 @@ function handleMessage(sender_psid, received_message) {
     .then(function (data) {
       // check if data is defined, and only fb users will have first & last names
       if (data && data.first_name && data.last_name) {
-        var post = {};
-        post[sender_psid] = {
+        userRef.child(sender_psid).set({
           first_name: data.first_name,
           last_name: data.last_name
-        }
-        userRef.update(post);
+        });
       }
     });
   
@@ -142,12 +140,11 @@ function handleMessage(sender_psid, received_message) {
     console.log("Location Data: ", received_message.attachments[0]);
     if (received_message.attachments[0].type === 'location') {
       var loc = received_message.attachments[0].payload.coordinates;
-      var post = {};
-      post = {
+      var u
+      userRef.child(sender_psid).update({
           lat: loc.lat,
           lng: loc.long
-      }
-      userRef.child(sender_psid).update(post);
+      });
       
       response = {
         "attachment": {
