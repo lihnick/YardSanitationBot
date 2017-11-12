@@ -118,7 +118,9 @@ function handleMessage(sender_psid, received_message) {
       if (data && data.first_name && data.last_name) {
         userRef.child(sender_psid).set({
           first_name: data.first_name,
-          last_name: data.last_name
+          last_name: data.last_name//,
+          // lat: "lat",
+          // lng: "lng"
         });
       }
     });
@@ -140,11 +142,23 @@ function handleMessage(sender_psid, received_message) {
     console.log("Location Data: ", received_message.attachments[0]);
     if (received_message.attachments[0].type === 'location') {
       var loc = received_message.attachments[0].payload.coordinates;
-      var u
-      userRef.child(sender_psid).update({
-          lat: loc.lat,
-          lng: loc.long
-      });
+      var update = JSON.parse(JSON.stringify(loc))
+      
+      rp({url: url, json: true})
+        .then(function (data) {
+          // check if data is defined, and only fb users will have first & last names
+          if (data && data.first_name && data.last_name) {
+            userRef.child(sender_psid).set({
+              first_name: data.first_name,
+              last_name: data.last_name,
+              lat: update.lat,
+              lng: update.long
+            });
+          }
+        });
+//       userRef.child(sender_psid).update({
+          
+//       });
       
       response = {
         "attachment": {
