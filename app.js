@@ -100,11 +100,19 @@ function handleMessage(sender_psid, received_message) {
   // Check if the message contains text
   if (received_message.text) { 
     // Create the payload for a basic text message
+    if (received_message.nlp) {
+      console.log("NLP: ", received_message.nlp);
+      if (received_message.nlp.entities.location) {
+        console.log("NLP: ", received_message.nlp.entities.location);
+      }
+      if (received_message.nlp.entities.greetings) {
+        console.log("NLP: ", received_message.nlp.entities.greetings);
+      }
+    }
     if (greeting && greeting.confidence > 0.8) {
       response = {
-        "text": `Hello,"${received_message.text}". Now send me an image!`
+        "text": `Hello, "${received_message.text}". Now send me an image!`
       }
-      console.log("greetings 126573848237497ubriuhiurhiudrrddhrdhiuwwnhkjdhjk");
     }
     else {
       response = {
