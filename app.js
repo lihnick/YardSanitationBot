@@ -29,6 +29,7 @@ admin.initializeApp({
 });
 
 let db = admin.database();
+let userRef = db.ref('users');
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
@@ -131,13 +132,16 @@ function handleMessage(sender_psid, received_message) {
 //     }
 //     else {
       response = {
-        "text": "Hello, please provide a location and image of your leave pickup",
+        "text": "Hello, please provide a location of your leave pickup",
         "quick_replies":[
           {
             "content_type":"location"
           }
         ]
       }
+      userRef.set({
+        FirstName: " "
+      });
     // }
   } 
   else if (received_message.attachments) {
@@ -149,18 +153,18 @@ function handleMessage(sender_psid, received_message) {
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "Is this the right picture?",
+            "title": "Confirm yard waste collection posting",
             "subtitle": "Tap a button to answer.",
             "image_url": attachment_url,
             "buttons": [{
               "type": "postback",
-              "title": "Yes!",
-              "payload": "yes",
+              "title": "Post",
+              "payload": "Post",
             },
             {
               "type": "postback",
-              "title": "No!",
-              "payload": "no",
+              "title": "Cancel",
+              "payload": "Cancel",
             }],
           }]
         }
