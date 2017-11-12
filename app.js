@@ -247,20 +247,26 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'Post') {
-    var valid = false;
+    // var valid = false;
     var post = userRef.child(sender_psid);
     post.once('value', function(snapshot) {
       console.log("finalize: ", snapshot.val());
       var data = snapshot.val();
       if (data.lat && data.lng) {
+        // valid = true;
         var time = {url: data.url, lat: data.lat, lng: data.lng, timestamp: Date.now()};
         post.child('posts').push(time);
-        valid = true;
       }
     });
-    response = { "text": "Thanks!" }
+    response = { "text": "Thanks!" };
+    // Cannot use this because of async
+    // if (valid) {
+    //   response = { "text": "Thanks!" };
+    // } else {
+    //   response = { "text": "Unable to get data, try again."};
+    // }
   } else if (payload === 'Cancel') {
-    response = { "text": "Cancelling" }
+    response = { "text": "Cancelled" };
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
