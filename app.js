@@ -19,9 +19,19 @@ const
   admin = require("firebase-admin"),
   app = express().use(body_parser.json()); // creates express http server
 
+admin.initializeApp({
+  credential: admin.credential.cert({
+    projectId: "wild-fc8bb",
+    clientEmail: "foo@wild-fc8bb.iam.gserviceaccount.com",
+    privateKey: "AIzaSyDE-oe6jwDbtq1S6fx-N5_DG3AFBjTinss"
+  }),
+  databaseURL: "https://wild-fc8bb.firebaseio.com"
+});
+
+let db = admin.database();
+
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
-
 
 // Accepts POST requests at /webhook endpoint
 app.post('/webhook', (req, res) => {  
