@@ -120,7 +120,12 @@ function handleMessage(sender_psid, received_message) {
 //     }
 //     else {
       response = {
-        "text": "Hello, please provide an image and location of your leave pickup"
+        "text": "Hello, please provide a location and image of your leave pickup",
+        "quick_replies":[
+          {
+            "content_type":"location"
+          }
+        ]
       }
     // }
   } 
