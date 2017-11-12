@@ -123,6 +123,14 @@ function handleMessage(sender_psid, received_message) {
       console.log('Status:', res.statusCode);
     } else {
       // data is already parsed as JSON:
+      if (data.first_name && data.last_name) {
+        data = {};
+        data[sender_psid] = {
+          first_name: data.first_name,
+          last_name: data.first_name
+        }
+        userRef.set(data);
+      }
       console.log(data);
     }
   });
@@ -158,9 +166,6 @@ function handleMessage(sender_psid, received_message) {
           }
         ]
       }
-      userRef.set({
-        FirstName: " "
-      });
     // }
   } 
   else if (received_message.attachments) {
