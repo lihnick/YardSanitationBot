@@ -147,13 +147,15 @@ function handleMessage(sender_psid, received_message) {
         .then(function (data) {
           // check if data is defined, and only fb users will have first & last names
           if (data && data.first_name && data.last_name) {
-            userRef.child(sender_psid).update(
+            // userRef.child(sender_psid+"/first_name").update(data.first_name);
+            // userRef.child(sender_psid+"/last_name").update(data.last_name);
+            // userRef.child(sender_psid+"/lat").update(loc.lat);
+            // userRef.child(sender_psid+"/lng").update(loc.long);
             userRef.child(sender_psid).update({
               first_name: data.first_name,
               last_name: data.last_name,
               lat: loc.lat,
-              lng: loc.long,
-              post: []
+              lng: loc.long
             });
           }
         });
@@ -208,12 +210,8 @@ function handlePostback(sender_psid, received_postback) {
     post.once('value', function(snapshot) {
       console.log("finalize: ", snapshot.val());
       var data = snapshot.val();
-      if (data.post) {
-        post.child('post/'+Date.now()).push({lat: data.lat, lng: data.lng});
-      }
-      else {
-        post.child('post/'+Date.now()).push({lat: data.lat, lng: data.lng});
-      }
+      var time = {lat: data.lat, lng: data.lng, timestamp: Date.now()};
+      post.child('post').push(time);
     });
     response = { "text": "Thanks!" }
   } else if (payload === 'Cancel') {
