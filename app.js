@@ -26,7 +26,6 @@ var serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://wild-fc8bb.firebaseio.com",
-  databaseAuthVariableOverride: null
 });
 
 let db = admin.database();
@@ -108,7 +107,10 @@ app.get('/webhook', (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
   
+  
   let response, nlp, url = "https://graph.facebook.com/v2.6/"+sender_psid+"?access_token="+PAGE_ACCESS_TOKEN;
+  
+  console.log("psid: " + sender_psid + " \turl: " + url);
   
   request.get({
     url: url,
@@ -121,7 +123,7 @@ function handleMessage(sender_psid, received_message) {
       console.log('Status:', res.statusCode);
     } else {
       // data is already parsed as JSON:
-      console.log(data.html_url);
+      console.log(data);
     }
   });
   
