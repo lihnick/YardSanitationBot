@@ -127,40 +127,19 @@ function handleMessage(sender_psid, received_message) {
   
   // Check if the message contains text
   if (received_message.text) { 
-    // Create the payload for a basic text message
-//     if (received_message.nlp) {
-//       nlp = received_message.nlp.entities;
-//     }
-//     if (nlp) {
-//       console.log("NLP: ", received_message.nlp); // debug
-      
-//       if (nlp.location && nlp.location[0].confidence > 0.8) {
-//         response = {
-//           "text": "Would you like to do a pickup at " + received_message.nlp.entities.location[0].value
-//         }
-//       }
-//       else if (nlp.greetings && nlp.greetings.confidence > 0.8) {
-//         console.log("NLP[greetings]: ", received_message.nlp.entities.greetings);
-//         response = {
-//           "text": "Hello, please provide an image and location of your leave pickup"
-//         }
-//       }
-//       console.log("NLP[location]: ", received_message.nlp.entities.location);
-//     }
-//     else {
-      response = {
-        "text": "Hello, please provide a location of your leave pickup",
-        "quick_replies":[
-          {
-            "content_type":"location"
-          }
-        ]
-      }
-    // }
+    response = {
+      "text": "Hello, please provide a location of your leave pickup",
+      "quick_replies":[
+        {
+          "content_type":"location"
+        }
+      ]
+    }
   } 
   else if (received_message.attachments) {
     // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
+    console.log("Location Data: " +)
     response = {
       "attachment": {
         "type": "template",
@@ -198,9 +177,9 @@ function handlePostback(sender_psid, received_postback) {
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
-  if (payload === 'yes') {
+  if (payload === 'Post') {
     response = { "text": "Thanks!" }
-  } else if (payload === 'no') {
+  } else if (payload === 'Cancel') {
     response = { "text": "Oops, try sending another image." }
   }
   // Send the message to acknowledge the postback
