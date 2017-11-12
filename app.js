@@ -14,6 +14,7 @@
 const 
   PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN,
   request = require('request'),
+  rp = require('request-promise'),
   express = require('express'),
   body_parser = require('body-parser'),
   admin = require("firebase-admin"),
@@ -112,28 +113,41 @@ function handleMessage(sender_psid, received_message) {
   
   console.log("psid: " + sender_psid + " \turl: " + url);
   
-  request.get({
-    url: url,
-    json: true,
-    headers: {'User-Agent': 'request'}
-  }, (err, res, data) => {
-    if (err) {
-      console.log('Error:', err);
-    } else if (res.statusCode !== 200) {
-      console.log('Status:', res.statusCode);
-    } else {
-      // data is already parsed as JSON:
-      if (data.first_name && data.last_name) {
-        data = {};
-        data[sender_psid] = {
-          first_name: data.first_name,
-          last_name: data.first_name
-        }
-        userRef.set(data);
-      }
+  rp({url: url, json: true})
+    .then(function (data) {
       console.log(data);
-    }
-  });
+      // if (data.first_name && data.last_name) {
+      //   data = {};
+      //   data[sender_psid] = {
+      //     first_name: data.first_name,
+      //     last_name: data.first_name
+      //   }
+      //   userRef.set(data);
+      // }
+    });
+  
+  // request.get({
+  //   url: url,
+  //   json: true,
+  //   headers: {'User-Agent': 'request'}
+  // }, (err, res, data) => {
+  //   if (err) {
+  //     console.log('Error:', err);
+  //   } else if (res.statusCode !== 200) {
+  //     console.log('Status:', res.statusCode);
+  //   } else {
+  //     // data is already parsed as JSON:
+  //     if (data.first_name && data.last_name) {
+  //       data = {};
+  //       data[sender_psid] = {
+  //         first_name: data.first_name,
+  //         last_name: data.first_name
+  //       }
+  //       userRef.set(data);
+  //     }
+  //     console.log(data);
+  //   }
+  // });
   
   // Check if the message contains text
   if (received_message.text) { 
