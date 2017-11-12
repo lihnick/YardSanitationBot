@@ -112,18 +112,18 @@ function handleMessage(sender_psid, received_message) {
   let response, nlp, url = "https://graph.facebook.com/v2.6/"+sender_psid+"?access_token="+PAGE_ACCESS_TOKEN;
   
   // request promise, waits for response in the then function
-  rp({url: url, json: true})
-    .then(function (data) {
-      // check if data is defined, and only fb users will have first & last names
-      if (data && data.first_name && data.last_name) {
-        userRef.child(sender_psid).set({
-          first_name: data.first_name,
-          last_name: data.last_name//,
-          // lat: "lat",
-          // lng: "lng"
-        });
-      }
-    });
+  // rp({url: url, json: true})
+  //   .then(function (data) {
+  //     // check if data is defined, and only fb users will have first & last names
+  //     if (data && data.first_name && data.last_name) {
+  //       userRef.child(sender_psid).update({
+  //         first_name: data.first_name,
+  //         last_name: data.last_name//,
+  //         // lat: "lat",
+  //         // lng: "lng"
+  //       });
+  //     }
+  //   });
   
   // Check if the message contains text
   if (received_message.text) { 
@@ -142,7 +142,6 @@ function handleMessage(sender_psid, received_message) {
     console.log("Location Data: ", received_message.attachments[0]);
     if (received_message.attachments[0].type === 'location') {
       var loc = received_message.attachments[0].payload.coordinates;
-      var update = JSON.parse(JSON.stringify(loc))
       
       rp({url: url, json: true})
         .then(function (data) {
@@ -151,14 +150,12 @@ function handleMessage(sender_psid, received_message) {
             userRef.child(sender_psid).set({
               first_name: data.first_name,
               last_name: data.last_name,
-              lat: update.lat,
-              lng: update.long
+              lat: loc.lat,
+              lng: loc.long,
+              post: []
             });
           }
         });
-//       userRef.child(sender_psid).update({
-          
-//       });
       
       response = {
         "attachment": {
@@ -207,8 +204,9 @@ function handlePostback(sender_psid, received_postback) {
   // Set the response based on the postback payload
   if (payload === 'Post') {
     var update = userRef.child(sender_psid);
-    update.once('value', function(snap) {
-      console.log("finalize: ", snap.child());
+    update.once('value', function(snapshot) {
+      console.log("finalize: ", snapshot.val());
+      
     });
     response = { "text": "Thanks!" }
   } else if (payload === 'Cancel') {
