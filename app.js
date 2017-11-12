@@ -111,43 +111,19 @@ function handleMessage(sender_psid, received_message) {
   
   let response, nlp, url = "https://graph.facebook.com/v2.6/"+sender_psid+"?access_token="+PAGE_ACCESS_TOKEN;
   
-  console.log("psid: " + sender_psid + " \turl: " + url);
-  
+  // request promise, waits for response in the then function
   rp({url: url, json: true})
     .then(function (data) {
-      console.log(data);
-      // if (data.first_name && data.last_name) {
-      //   data = {};
-      //   data[sender_psid] = {
-      //     first_name: data.first_name,
-      //     last_name: data.first_name
-      //   }
-      //   userRef.set(data);
-      // }
+      // check if data is defined, and only fb users will have first & last names
+      if (data && data.first_name && data.last_name) {
+        var post = {};
+        post[sender_psid] = {
+          first_name: data.first_name,
+          last_name: data.last_name
+        }
+        userRef.set(post);
+      }
     });
-  
-  // request.get({
-  //   url: url,
-  //   json: true,
-  //   headers: {'User-Agent': 'request'}
-  // }, (err, res, data) => {
-  //   if (err) {
-  //     console.log('Error:', err);
-  //   } else if (res.statusCode !== 200) {
-  //     console.log('Status:', res.statusCode);
-  //   } else {
-  //     // data is already parsed as JSON:
-  //     if (data.first_name && data.last_name) {
-  //       data = {};
-  //       data[sender_psid] = {
-  //         first_name: data.first_name,
-  //         last_name: data.first_name
-  //       }
-  //       userRef.set(data);
-  //     }
-  //     console.log(data);
-  //   }
-  // });
   
   // Check if the message contains text
   if (received_message.text) { 
