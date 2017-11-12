@@ -19,13 +19,14 @@ const
   admin = require("firebase-admin"),
   app = express().use(body_parser.json()); // creates express http server
 
+// Fetch the service account key JSON file contents
+var serviceAccount = require("./serviceAccountKey.json");
+
+// Initialize the app with a service account, granting admin privileges
 admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: "wild-fc8bb",
-    clientEmail: "foo@wild-fc8bb.iam.gserviceaccount.com",
-    privateKey: "AIzaSyDE-oe6jwDbtq1S6fx-N5_DG3AFBjTinss"
-  }),
-  databaseURL: "https://wild-fc8bb.firebaseio.com"
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://wild-fc8bb.firebaseio.com",
+  databaseAuthVariableOverride: null
 });
 
 let db = admin.database();
