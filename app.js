@@ -121,7 +121,7 @@ function handleMessage(sender_psid, received_message) {
           first_name: data.first_name,
           last_name: data.last_name
         }
-        userRef.set(post);
+        userRef.update(post);
       }
     });
   
@@ -144,12 +144,10 @@ function handleMessage(sender_psid, received_message) {
       var loc = received_message.attachments[0].payload.coordinates;
       var post = {};
       post[sender_psid] = {
-        coordinate: {
           lat: loc.lat,
           lng: loc.long
-        }
       }
-      userRef.set(post);
+      userRef.update(post);
       
       response = {
         "attachment": {
@@ -197,10 +195,13 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'Post') {
+    var update = userRef.child(sender_psid);
+    update.once('value', function(snap) {
+      console.log("finalize: ", snap.child());
+    });
     response = { "text": "Thanks!" }
-    
   } else if (payload === 'Cancel') {
-    response = { "text": "Oops, try sending another image." }
+    response = { "text": "Cancelling" }
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
