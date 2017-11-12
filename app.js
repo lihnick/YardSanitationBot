@@ -147,7 +147,8 @@ function handleMessage(sender_psid, received_message) {
         .then(function (data) {
           // check if data is defined, and only fb users will have first & last names
           if (data && data.first_name && data.last_name) {
-            userRef.child(sender_psid).set({
+            userRef.child(sender_psid).update(
+            userRef.child(sender_psid).update({
               first_name: data.first_name,
               last_name: data.last_name,
               lat: loc.lat,
@@ -203,10 +204,16 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'Post') {
-    var update = userRef.child(sender_psid);
-    update.once('value', function(snapshot) {
+    var post = userRef.child(sender_psid);
+    post.once('value', function(snapshot) {
       console.log("finalize: ", snapshot.val());
-      
+      var data = snapshot.val();
+      if (data.post) {
+        post.child('post/'+Date.now()).push({lat: data.lat, lng: data.lng});
+      }
+      else {
+        post.child('post/'+Date.now()).push({lat: data.lat, lng: data.lng});
+      }
     });
     response = { "text": "Thanks!" }
   } else if (payload === 'Cancel') {
