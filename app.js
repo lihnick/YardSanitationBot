@@ -139,30 +139,49 @@ function handleMessage(sender_psid, received_message) {
   else if (received_message.attachments) {
     // Get the URL of the message attachment
     let attachment_url = received_message.attachments[0].payload.url;
-    console.log("Location Data: " +)
-    response = {
-      "attachment": {
-        "type": "template",
-        "payload": {
-          "template_type": "generic",
-          "elements": [{
-            "title": "Confirm yard waste collection posting",
-            "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
-            "buttons": [{
-              "type": "postback",
-              "title": "Post",
-              "payload": "Post",
-            },
-            {
-              "type": "postback",
-              "title": "Cancel",
-              "payload": "Cancel",
-            }],
-          }]
+    console.log("Location Data: ", received_message.attachments[0]);
+    if (received_message.attachments[0].type === 'location') {
+      var loc = received_message.attachments[0].payload.coordinates;
+      var post = {};
+      post[sender_psid] = {
+        coordinate: {
+          lat: loc.lat,
+          lng: loc.long
         }
       }
-    } // end response
+      userRef.set(post);
+      
+      response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": [{
+              "title": "Confirm yard waste collection posting",
+              "subtitle": "Tap a button to answer.",
+              "image_url": attachment_url,
+              "buttons": [{
+                "type": "postback",
+                "title": "Post",
+                "payload": "Post",
+              },
+              {
+                "type": "postback",
+                "title": "Cancel",
+                "payload": "Cancel",
+              }],
+            }]
+          }
+        }
+      }
+    }
+    else {
+      response = {
+        "text": "Sorry, unable to find location data from the input"
+      }
+    }
+
+     // end response
   } 
   // Sends the response message
   callSendAPI(sender_psid, response);    
@@ -179,6 +198,7 @@ function handlePostback(sender_psid, received_postback) {
   // Set the response based on the postback payload
   if (payload === 'Post') {
     response = { "text": "Thanks!" }
+    
   } else if (payload === 'Cancel') {
     response = { "text": "Oops, try sending another image." }
   }
