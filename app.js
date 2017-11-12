@@ -91,6 +91,9 @@ app.get('/webhook', (req, res) => {
   }
 });
 
+function firstEntity(nlp, name) {
+  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
 
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
@@ -100,6 +103,19 @@ function handleMessage(sender_psid, received_message) {
   // Check if the message contains text
   if (received_message.text) { 
     // Create the payload for a basic text message
+    let nlp = received_message.nlp.entities;
+    if (nlp) {
+      if (nlp.greetings && nlp.greetings.confidence > 0.8) {
+        response = {
+          "text": "Hello, please provide an image and location of your leave pickup"
+        }
+      }
+    }
+    else {
+      response = {
+        "text": "Hello, please provide an image and location of your leave pickup"
+      }
+    }
     if (received_message.nlp) {
       console.log("NLP: ", received_message.nlp);
       if (received_message.nlp.entities.location) {
@@ -195,6 +211,3 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-function firstEntity(nlp, name) {
-  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
-}
